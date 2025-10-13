@@ -286,8 +286,9 @@ export interface ReceivedSongsResponse extends Array<ReceivedSongItem> {}
 /**
  * プレイヤー用の楽曲取得（認証不要）
  */
-export async function getPlayerSong(id: string): Promise<PlayerSongResponse> {
-  return apiGet<PlayerSongResponse>(`/player/songs/${id}`);
+export async function getPlayerSong(id: string, shareId?: string | null): Promise<PlayerSongResponse> {
+  const queryParams = shareId ? `?share_id=${encodeURIComponent(shareId)}` : '';
+  return apiGet<PlayerSongResponse>(`/player/songs/${id}${queryParams}`);
 }
 
 /**

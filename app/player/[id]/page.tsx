@@ -30,7 +30,10 @@ export default function PlayerPage({ params }: PlayerPageProps) {
     const fetchSong = async () => {
       try {
         setIsLoading(true);
-        const songData = await getPlayerSong(id);
+        // URLからshare_idを取得
+        const searchParams = new URLSearchParams(window.location.search);
+        const shareId = searchParams.get('share_id');
+        const songData = await getPlayerSong(id, shareId);
         setSong(songData);
       } catch (error) {
         console.error('Failed to fetch song:', error);
