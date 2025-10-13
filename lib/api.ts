@@ -113,7 +113,10 @@ async function apiRequest<T>(
           return msg; // その他のエラーはそのまま表示
         });
         
-        const error = new Error(japaneseMessages.join('、'));
+        const errorMessage = Array.isArray(japaneseMessages) 
+          ? japaneseMessages.join('、') 
+          : japaneseMessages;
+        const error = new Error(errorMessage);
         (error as any).status = 422;
         (error as any).errors = japaneseMessages;
         throw error;
@@ -122,6 +125,29 @@ async function apiRequest<T>(
       const error = await response.json().catch(() => ({
         message: 'エラーが発生しました',
       }));
+      
+      // error_code が含まれる場合の処理
+      if (error.error_code) {
+        let errorMessage = 'エラーが発生しました';
+        switch (error.error_code) {
+          case 'wrong_password':
+            errorMessage = 'パスワードが違います';
+            break;
+          case 'missing_parameters':
+            errorMessage = '必要なパラメータが不足しています';
+            break;
+          case 'invalid_json':
+            errorMessage = 'リクエスト形式が正しくありません';
+            break;
+          case 'internal_error':
+            errorMessage = 'サーバー内部エラーが発生しました';
+            break;
+        }
+        const customError = new Error(errorMessage);
+        (customError as any).error_code = error.error_code;
+        throw customError;
+      }
+      
       throw new Error(error.message || `HTTP Error: ${response.status}`);
     }
 
@@ -307,6 +333,33 @@ export interface ReceivedSongsApiResponse {
   message?: string;
 }
 
+export interface UserSongItem {
+  song_id: number;
+  song_name: string;
+  song_picture_url: string;
+  artist_name: string;
+}
+
+export interface UserSongsResponse extends Array<UserSongItem> {}
+
+export interface UnlockSongRequest {
+  password: string;
+}
+
+export interface UnlockSongResponse {
+  data: {
+    id: number;
+    user_id: number;
+    song_id: number;
+    created_at: string;
+    updated_at: string;
+  };
+}
+
+export interface UnlockSongErrorResponse {
+  error_code: string;
+}
+
 /**
  * プレイヤー用の楽曲取得（認証不要）
  */
@@ -336,6 +389,36 @@ export async function getArtistRanking(artistId: string): Promise<ArtistRankingR
   return apiGet<ArtistRankingResponse>(`/ranking/${artistId}`);
 }
 
+/**
+ * ユーザーの共有可能楽曲一覧取得（認証必要）
+ */
+export async function getUserSongs(): Promise<UserSongItem[]> {
+  const response = await apiGet<UserSongItem[] | { message: string }>('/users/songs', true);
+  
+  // レスポンスが配列の場合はそのまま返す
+  if (Array.isArray(response)) {
+    return response;
+  }
+  
+  // メッセージが含まれる場合は空配列を返す（楽曲がない場合）
+  if (response && 'message' in response) {
+    return [];
+  }
+  
+  // その他の場合は空配列を返す
+  return [];
+}
+
+/**
+ * 楽曲のアンロック（認証必要）
+ */
+export async function unlockSong(songId: string, password: string): Promise<UnlockSongResponse> {
+  return apiPost<UnlockSongResponse>(
+    `/users/songs/${songId}/unlock`,
+    { password },
+    true
+  );
+}
 
 /**
  * ログイン状態チェック
