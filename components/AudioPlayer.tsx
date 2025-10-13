@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState, useEffect } from 'react';
+import Link from 'next/link';
 import SpotifyButton from './SpotifyButton';
 import AppleMusicButton from './AppleMusicButton';
 
@@ -11,6 +12,7 @@ interface AudioPlayerProps {
   albumArtUrl: string;
   spotifyUrl?: string;
   appleUrl?: string;
+  artistId?: number;
 }
 
 export default function AudioPlayer({
@@ -20,6 +22,7 @@ export default function AudioPlayer({
   albumArtUrl,
   spotifyUrl,
   appleUrl,
+  artistId,
 }: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -177,9 +180,18 @@ export default function AudioPlayer({
             <h1 className="text-2xl font-bold text-white mb-2 drop-shadow-lg break-words line-clamp-2">
               {songName}
             </h1>
-            <p className="text-lg text-gray-300 drop-shadow-md">
-              {artistName}
-            </p>
+            {artistId ? (
+              <Link
+                href={`/artist/${artistId}`}
+                className="text-lg text-gray-300 hover:text-white drop-shadow-md transition-colors cursor-pointer"
+              >
+                {artistName}
+              </Link>
+            ) : (
+              <p className="text-lg text-gray-300 drop-shadow-md">
+                {artistName}
+              </p>
+            )}
           </div>
         </div>
 

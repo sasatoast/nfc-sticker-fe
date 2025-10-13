@@ -1,103 +1,120 @@
-import Image from "next/image";
+'use client';
+
+import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const { user, isLoading, isAuthenticated } = useAuth();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center">
+        <div className="text-blue-900 text-xl">読み込み中...</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex flex-col">
+      {/* ヘッダー */}
+      <header className="flex items-center justify-between p-6">
+        <h1 className="text-2xl font-bold text-blue-900">NFC Sticker</h1>
+        
+        {isAuthenticated ? (
+          <div className="flex items-center gap-4">
+            <span className="text-blue-700">こんにちは、{user?.name}さん</span>
+            <Link
+              href="/auth/logout"
+              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              ログアウト
+            </Link>
+          </div>
+        ) : (
+          <div className="flex items-center gap-4">
+            <Link
+              href="/auth/login"
+              className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-4 py-2 rounded-lg transition-colors"
+            >
+              ログイン
+            </Link>
+            <Link
+              href="/auth/signup"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              新規登録
+            </Link>
+          </div>
+        )}
+      </header>
+
+      {/* メインコンテンツ */}
+      <main className="flex-1 flex items-center justify-center p-6">
+        <div className="text-center max-w-2xl">
+          <h2 className="text-4xl font-bold text-blue-900 mb-6">
+            音楽を共有しよう
+          </h2>
+          <p className="text-xl text-blue-700 mb-8">
+            NFCステッカーを使って、簡単に音楽を共有できます
+          </p>
+
+          {isAuthenticated ? (
+            <div className="space-y-4">
+              <p className="text-blue-600 mb-6">
+                共有された楽曲を確認したり、新しい楽曲を共有したりできます
+              </p>
+              <div className="flex gap-4 justify-center">
+                <Link
+                  href="/home"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-200"
+                >
+                  共有楽曲を見る
+                </Link>
+                <Link
+                  href="/share"
+                  className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-8 py-3 rounded-lg font-semibold transition-all duration-200"
+                >
+                  楽曲を共有する
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <p className="text-blue-600 mb-6">
+                まずはログインして、音楽の世界を楽しみましょう
+              </p>
+              <div className="flex gap-4 justify-center">
+                <Link
+                  href="/auth/login"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-all duration-200"
+                >
+                  ログイン
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-8 py-3 rounded-lg font-semibold transition-all duration-200"
+                >
+                  新規登録
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {/* デモ用のプレイヤーリンク */}
+          <div className="mt-12 pt-8 border-t border-blue-200">
+            <p className="text-blue-500 mb-4">デモ用プレイヤー</p>
+            <Link
+              href="/player/1"
+              className="inline-flex items-center gap-2 bg-blue-100 hover:bg-blue-200 text-blue-700 px-6 py-3 rounded-lg transition-all duration-200"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+              プレイヤーを試す
+            </Link>
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }

@@ -45,26 +45,28 @@ async function apiRequest<T>(
 ): Promise<T> {
   const { requireAuth = false, headers = {}, ...fetchOptions } = options;
 
-  const requestHeaders: HeadersInit = {
+  const requestHeaders: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...headers,
+    ...(headers as Record<string, string>),
   };
 
-  // 認証が必要な場合、トークンを追加
-  if (requireAuth) {
-    const token = getAuthToken();
-    if (token) {
-      requestHeaders['Authorization'] = `Bearer ${token}`;
-    }
+  // トークンがある場合は常にヘッダーに追加（認証オプション問わず）
+  const token = getAuthToken();
+  if (token) {
+    requestHeaders['Authorization'] = `Bearer ${token}`;
   }
 
   const url = `${API_URL}${endpoint}`;
 
   try {
+    console.log('Making API request to:', url, 'with headers:', requestHeaders);
+    
     const response = await fetch(url, {
       ...fetchOptions,
       headers: requestHeaders,
     });
+
+    console.log('Response status:', response.status, 'for URL:', url);
 
     // レスポンスヘッダーからAuthorizationトークンを抽出（ログイン/サインアップ時）
     const authHeader = response.headers.get('Authorization');
@@ -74,6 +76,49 @@ async function apiRequest<T>(
     }
 
     if (!response.ok) {
+      // 401エラーの場合は認証エラーとして処理
+      if (response.status === 401) {
+        removeAuthToken();
+        localStorage.removeItem('user');
+        const error = new Error('認証が必要です。ログインしてください。');
+        (error as any).status = 401;
+        throw error;
+      }
+
+      // バリデーションエラー（422）の場合は詳細なエラーメッセージを処理
+      if (response.status === 422) {
+        const errorData = await response.json().catch(() => ({
+          message: 'バリデーションエラーが発生しました',
+          errors: []
+        }));
+        
+        // エラーメッセージを日本語に変換
+        const errorMessages = errorData.errors || [];
+        const japaneseMessages = errorMessages.map((msg: string) => {
+          if (msg.includes('Email has already been taken')) {
+            return 'このメールアドレスは既に使用されています';
+          }
+          if (msg.includes('Name has already been taken')) {
+            return 'このユーザー名は既に使用されています';
+          }
+          if (msg.includes('Password is too short')) {
+            return 'パスワードが短すぎます（最低6文字以上）';
+          }
+          if (msg.includes("Password confirmation doesn't match")) {
+            return 'パスワードが一致しません';
+          }
+          if (msg.includes('Email is invalid')) {
+            return '有効なメールアドレスを入力してください';
+          }
+          return msg; // その他のエラーはそのまま表示
+        });
+        
+        const error = new Error(japaneseMessages.join('、'));
+        (error as any).status = 422;
+        (error as any).errors = japaneseMessages;
+        throw error;
+      }
+
       const error = await response.json().catch(() => ({
         message: 'エラーが発生しました',
       }));
@@ -87,7 +132,15 @@ async function apiRequest<T>(
 
     return await response.json();
   } catch (error) {
-    console.error('API Request Error:', error);
+    console.error('API Request Error for URL:', url, error);
+    
+    // ネットワークエラーの場合の詳細な情報を提供
+    if (error instanceof TypeError && error.message === 'Failed to fetch') {
+      const networkError = new Error(`ネットワークエラー: ${url} に接続できません。バックエンドサーバーが起動しているか確認してください。`);
+      (networkError as any).originalError = error;
+      throw networkError;
+    }
+    
     throw error;
   }
 }
@@ -139,13 +192,14 @@ export async function apiDelete<T>(
 
 export interface LoginRequest {
   user: {
-    name: string;
+    email: string;
     password: string;
   };
 }
 
 export interface SignupRequest {
   user: {
+    email: string;
     name: string;
     password: string;
     password_confirmation: string;
@@ -153,13 +207,12 @@ export interface SignupRequest {
 }
 
 export interface AuthResponse {
-  status: {
-    code: number;
-    message: string;
-  };
-  data: {
+  message: string;
+  user: {
     id: number;
     name: string;
+    email: string;
+    share_id: string;
     created_at: string;
     updated_at: string;
   };
@@ -169,11 +222,11 @@ export interface AuthResponse {
  * ログイン
  */
 export async function login(
-  name: string,
+  email: string,
   password: string
 ): Promise<AuthResponse> {
   return apiPost<AuthResponse>('/login', {
-    user: { name, password },
+    user: { email, password },
   });
 }
 
@@ -181,12 +234,14 @@ export async function login(
  * サインアップ
  */
 export async function signup(
+  email: string,
   name: string,
   password: string,
   passwordConfirmation: string
 ): Promise<AuthResponse> {
   return apiPost<AuthResponse>('/signup', {
     user: {
+      email,
       name,
       password,
       password_confirmation: passwordConfirmation,
@@ -219,23 +274,68 @@ export interface Song {
 
 export interface PlayerSongResponse extends Song {}
 
-export interface ReceivedSongsResponse {
-  songs: Song[];
+export interface ReceivedSongItem {
+  song_id: number;
+  song_name: string;
+  song_picture_url: string;
+  artist_name: string;
+}
+
+export interface ReceivedSongsResponse extends Array<ReceivedSongItem> {}
+
+export interface Artist {
+  name: string;
+  picture_url: string;
+  spotify_url: string;
+  apple_url: string;
+  homepage_url: string;
+}
+
+export interface RankingItem {
+  user_name: string;
+  song_name: string;
+  picture_url: string;
+  count: number;
+}
+
+export interface ArtistRankingResponse {
+  data: RankingItem[];
+}
+
+export interface ReceivedSongsApiResponse {
+  shared_song_data?: ReceivedSongItem[];
+  message?: string;
 }
 
 /**
  * プレイヤー用の楽曲取得（認証不要）
  */
-export async function getPlayerSong(id: string): Promise<PlayerSongResponse> {
-  return apiGet<PlayerSongResponse>(`/player/songs/${id}`);
+export async function getPlayerSong(id: string, shareId?: string | null): Promise<PlayerSongResponse> {
+  const queryParams = shareId ? `?share_id=${encodeURIComponent(shareId)}` : '';
+  return apiGet<PlayerSongResponse>(`/player/songs/${id}${queryParams}`);
 }
 
 /**
  * 共有された楽曲一覧取得（認証必要）
  */
-export async function getReceivedSongs(): Promise<ReceivedSongsResponse> {
-  return apiGet<ReceivedSongsResponse>('/users/received/songs', true);
+export async function getReceivedSongs(): Promise<ReceivedSongItem[] | ReceivedSongsApiResponse> {
+  return apiGet<ReceivedSongItem[] | ReceivedSongsApiResponse>('/users/received/songs', true);
 }
+
+/**
+ * アーティスト情報取得
+ */
+export async function getArtist(artistId: string): Promise<Artist> {
+  return apiGet<Artist>(`/artists/${artistId}`);
+}
+
+/**
+ * アーティストランキング取得
+ */
+export async function getArtistRanking(artistId: string): Promise<ArtistRankingResponse> {
+  return apiGet<ArtistRankingResponse>(`/ranking/${artistId}`);
+}
+
 
 /**
  * ログイン状態チェック
