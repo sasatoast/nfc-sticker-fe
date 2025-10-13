@@ -100,6 +100,7 @@ export default function PlayerPage({ params }: PlayerPageProps) {
         albumArtUrl={song.picture_url}
         spotifyUrl={song.spotify_url}
         appleUrl={song.apple_url}
+        artistId={song.artist_id}
       />
     </div>
   );

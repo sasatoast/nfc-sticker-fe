@@ -283,6 +283,25 @@ export interface ReceivedSongItem {
 
 export interface ReceivedSongsResponse extends Array<ReceivedSongItem> {}
 
+export interface Artist {
+  name: string;
+  picture_url: string;
+  spotify_url: string;
+  apple_url: string;
+  homepage_url: string;
+}
+
+export interface RankingItem {
+  user_name: string;
+  song_name: string;
+  picture_url: string;
+  count: number;
+}
+
+export interface ArtistRankingResponse {
+  data: RankingItem[];
+}
+
 export interface ReceivedSongsApiResponse {
   shared_song_data?: ReceivedSongItem[];
   message?: string;
@@ -301,6 +320,20 @@ export async function getPlayerSong(id: string, shareId?: string | null): Promis
  */
 export async function getReceivedSongs(): Promise<ReceivedSongItem[] | ReceivedSongsApiResponse> {
   return apiGet<ReceivedSongItem[] | ReceivedSongsApiResponse>('/users/received/songs', true);
+}
+
+/**
+ * アーティスト情報取得
+ */
+export async function getArtist(artistId: string): Promise<Artist> {
+  return apiGet<Artist>(`/artists/${artistId}`);
+}
+
+/**
+ * アーティストランキング取得
+ */
+export async function getArtistRanking(artistId: string): Promise<ArtistRankingResponse> {
+  return apiGet<ArtistRankingResponse>(`/ranking/${artistId}`);
 }
 
 
