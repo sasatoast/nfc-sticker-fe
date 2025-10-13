@@ -35,10 +35,21 @@ export default function HomePage() {
     try {
       setIsLoading(true);
       const response = await getReceivedSongs();
-      setSongs(response);
+      
+      // レスポンスが配列でない場合の処理
+      if (Array.isArray(response)) {
+        setSongs(response);
+      } else if (response && response.shared_song_data && Array.isArray(response.shared_song_data)) {
+        // バックエンドが { shared_song_data: [...] } の形式で返す場合
+        setSongs(response.shared_song_data);
+      } else {
+        // その他の場合は空配列を設定
+        setSongs([]);
+      }
     } catch (error) {
       console.error('Failed to fetch received songs:', error);
       setError('楽曲の取得に失敗しました');
+      setSongs([]); // エラー時も空配列を設定
     } finally {
       setIsLoading(false);
     }

@@ -283,6 +283,11 @@ export interface ReceivedSongItem {
 
 export interface ReceivedSongsResponse extends Array<ReceivedSongItem> {}
 
+export interface ReceivedSongsApiResponse {
+  shared_song_data?: ReceivedSongItem[];
+  message?: string;
+}
+
 /**
  * プレイヤー用の楽曲取得（認証不要）
  */
@@ -294,8 +299,8 @@ export async function getPlayerSong(id: string, shareId?: string | null): Promis
 /**
  * 共有された楽曲一覧取得（認証必要）
  */
-export async function getReceivedSongs(): Promise<ReceivedSongItem[]> {
-  return apiGet<ReceivedSongItem[]>('/users/received/songs', true);
+export async function getReceivedSongs(): Promise<ReceivedSongItem[] | ReceivedSongsApiResponse> {
+  return apiGet<ReceivedSongItem[] | ReceivedSongsApiResponse>('/users/received/songs', true);
 }
 
 
