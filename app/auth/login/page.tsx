@@ -29,7 +29,7 @@ export default function LoginPage() {
         name: response.user.name,
         email: response.user.email,
       });
-      router.push('/'); // ログイン後はホーム画面へ
+      router.push('/home'); // ログイン後はホーム画面へ
     } catch (err: any) {
       // エラーメッセージを設定
       if (err.message) {

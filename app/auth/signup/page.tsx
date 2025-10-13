@@ -44,7 +44,7 @@ export default function SignupPage() {
         name: response.user.name,
         email: response.user.email,
       });
-      router.push('/'); // サインアップ後はホーム画面へ
+      router.push('/home'); // サインアップ後はホーム画面へ
     } catch (err: any) {
       // エラーメッセージを設定（API側で日本語化済み）
       if (err.message) {
