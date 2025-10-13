@@ -137,7 +137,7 @@ export default function ArtistPage({ params }: ArtistPageProps) {
           {/* ランキングセクション */}
           <div>
             <h3 className="text-xl font-semibold text-white mb-6">
-              人気楽曲ランキング
+              共有回数ランキング
             </h3>
 
             {rankings.length === 0 ? (
