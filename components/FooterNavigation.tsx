@@ -15,14 +15,14 @@ export default function FooterNavigation({ className = '' }: FooterNavigationPro
   };
 
   return (
-    <footer className={`fixed bottom-0 left-0 right-0 bg-white border-t border-blue-100 shadow-lg ${className}`}>
+    <footer className={`fixed bottom-0 left-0 right-0 border-t shadow-lg backdrop-blur-md font-sans ${className}`} style={{ backgroundColor: '#1C1C1E', borderTopColor: '#3A3A3C' }}>
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex items-center justify-around py-3">
           {/* ホームボタン */}
           <Link
             href="/home"
-            className={`flex flex-col items-center gap-1 transition-colors ${
-              isActive('/home') ? 'text-blue-600' : 'text-blue-400'
+            className={`flex flex-col items-center gap-1 transition-all duration-200 ${
+              isActive('/home') ? 'text-white' : 'text-gray-500'
             }`}
           >
             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -34,8 +34,8 @@ export default function FooterNavigation({ className = '' }: FooterNavigationPro
           {/* 共有ボタン */}
           <Link
             href="/share"
-            className={`flex flex-col items-center gap-1 transition-colors ${
-              isActive('/share') ? 'text-blue-600' : 'text-blue-400'
+            className={`flex flex-col items-center gap-1 transition-all duration-200 ${
+              isActive('/share') ? 'text-white' : 'text-gray-500'
             }`}
           >
             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -47,8 +47,8 @@ export default function FooterNavigation({ className = '' }: FooterNavigationPro
           {/* プロフィールボタン */}
           <Link
             href="/profile"
-            className={`flex flex-col items-center gap-1 transition-colors ${
-              isActive('/profile') ? 'text-blue-600' : 'text-blue-400'
+            className={`flex flex-col items-center gap-1 transition-all duration-200 ${
+              isActive('/profile') ? 'text-white' : 'text-gray-500'
             }`}
           >
             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">

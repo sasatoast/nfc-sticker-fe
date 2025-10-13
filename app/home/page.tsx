@@ -57,21 +57,21 @@ export default function HomePage() {
 
   if (authLoading || isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-white">
-        <div className="text-blue-900 text-xl">読み込み中...</div>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#1C1C1E' }}>
+        <div className="text-white text-xl">読み込み中...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex flex-col">
+    <div className="min-h-screen flex flex-col font-sans" style={{ backgroundColor: '#1C1C1E' }}>
       {/* ヘッダー */}
-      <header className="bg-white shadow-sm border-b border-blue-100">
+      <header style={{ backgroundColor: '#1C1C1E', borderBottomColor: '#3A3A3C' }} className="border-b">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-blue-900">ホーム</h1>
+            <h1 className="text-2xl font-bold text-white">ホーム</h1>
             <div className="flex items-center gap-4">
-              <span className="text-blue-700">こんにちは、{user?.name}さん</span>
+              <span className="text-gray-300">{user?.name}でログイン中</span>
             </div>
           </div>
         </div>
@@ -80,12 +80,12 @@ export default function HomePage() {
       {/* メインコンテンツ */}
       <main className="flex-1 overflow-y-auto pb-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h2 className="text-xl font-semibold text-blue-900 mb-6">
+          <h2 className="text-xl font-semibold text-white mb-6">
             共有された楽曲
           </h2>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+            <div className="bg-gray-900 border border-gray-800 text-white px-4 py-3 rounded-lg mb-4">
               {error}
             </div>
           )}
@@ -93,7 +93,7 @@ export default function HomePage() {
           {songs && songs.length === 0 && !error ? (
             <div className="text-center py-12">
               <svg
-                className="mx-auto h-12 w-12 text-blue-300 mb-4"
+                className="mx-auto h-12 w-12 text-gray-500 mb-4"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -105,8 +105,8 @@ export default function HomePage() {
                   d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
                 />
               </svg>
-              <p className="text-blue-500 text-lg">まだ共有された楽曲がありません</p>
-              <p className="text-blue-400 text-sm mt-2">
+              <p className="text-white text-lg">まだ共有された楽曲がありません</p>
+              <p className="text-gray-400 text-sm mt-2">
                 NFCシールをスキャンして楽曲を共有してもらいましょう！
               </p>
             </div>
