@@ -274,9 +274,14 @@ export interface Song {
 
 export interface PlayerSongResponse extends Song {}
 
-export interface ReceivedSongsResponse {
-  songs: Song[];
+export interface ReceivedSongItem {
+  song_id: number;
+  song_name: string;
+  song_picture_url: string;
+  artist_name: string;
 }
+
+export interface ReceivedSongsResponse extends Array<ReceivedSongItem> {}
 
 /**
  * プレイヤー用の楽曲取得（認証不要）
@@ -288,8 +293,8 @@ export async function getPlayerSong(id: string): Promise<PlayerSongResponse> {
 /**
  * 共有された楽曲一覧取得（認証必要）
  */
-export async function getReceivedSongs(): Promise<ReceivedSongsResponse> {
-  return apiGet<ReceivedSongsResponse>('/users/received/songs', true);
+export async function getReceivedSongs(): Promise<ReceivedSongItem[]> {
+  return apiGet<ReceivedSongItem[]>('/users/received/songs', true);
 }
 
 

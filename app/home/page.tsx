@@ -4,13 +4,14 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
-import { getReceivedSongs, Song } from '@/lib/api';
+import { getReceivedSongs, ReceivedSongItem } from '@/lib/api';
 import FooterNavigation from '@/components/FooterNavigation';
+import SongCard from '@/components/SongCard';
 
 export default function HomePage() {
   const router = useRouter();
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
-  const [songs, setSongs] = useState<Song[]>([]);
+  const [songs, setSongs] = useState<ReceivedSongItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,7 +35,7 @@ export default function HomePage() {
     try {
       setIsLoading(true);
       const response = await getReceivedSongs();
-      setSongs(response.songs);
+      setSongs(response);
     } catch (error) {
       console.error('Failed to fetch received songs:', error);
       setError('楽曲の取得に失敗しました');
@@ -52,7 +53,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex flex-col">
       {/* ヘッダー */}
       <header className="bg-white shadow-sm border-b border-blue-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -66,9 +67,9 @@ export default function HomePage() {
       </header>
 
       {/* メインコンテンツ */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-6">
-          <h2 className="text-xl font-semibold text-blue-900 mb-4">
+      <main className="flex-1 overflow-y-auto pb-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <h2 className="text-xl font-semibold text-blue-900 mb-6">
             共有された楽曲
           </h2>
 
@@ -99,41 +100,9 @@ export default function HomePage() {
               </p>
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-2 gap-3">
               {songs && songs.map((song) => (
-                <Link
-                  key={song.id}
-                  href={`/player/${song.id}`}
-                  className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-200 overflow-hidden group"
-                >
-                  <div className="relative aspect-square">
-                    <img
-                      src={song.picture_url}
-                      alt={song.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-end p-4">
-                      <div className="flex items-center gap-2 text-white">
-                        <svg
-                          className="w-8 h-8"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path d="M8 5v14l11-7z" />
-                        </svg>
-                        <span className="text-sm font-medium">再生する</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-blue-900 line-clamp-1 mb-1">
-                      {song.name}
-                    </h3>
-                    <p className="text-sm text-blue-600 line-clamp-1">
-                      {song.artist_name}
-                    </p>
-                  </div>
-                </Link>
+                <SongCard key={song.song_id} song={song} />
               ))}
             </div>
           )}
