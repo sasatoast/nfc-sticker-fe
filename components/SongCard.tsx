@@ -9,7 +9,8 @@ export default function SongCard({ song }: SongCardProps) {
   return (
     <Link
       href={`/player/${song.song_id}`}
-      className="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-200 overflow-hidden group cursor-pointer"
+      className="rounded-2xl shadow-md hover:shadow-xl transition-all duration-200 overflow-hidden group cursor-pointer border font-sans"
+      style={{ backgroundColor: '#242424', borderColor: '#3A3A3C' }}
     >
       {/* 楽曲画像エリア */}
       <div className="relative aspect-square">
@@ -35,11 +36,11 @@ export default function SongCard({ song }: SongCardProps) {
       </div>
 
       {/* 楽曲情報エリア */}
-      <div className="p-3 space-y-1">
-        <h3 className="font-bold text-gray-900 text-base leading-tight line-clamp-2">
+      <div className="p-3 space-y-1 border-t" style={{ backgroundColor: '#2C2C2E', borderTopColor: '#3A3A3C' }}>
+        <h3 className="font-bold text-white text-base leading-tight line-clamp-2">
           {song.song_name}
         </h3>
-        <p className="text-xs text-gray-600 line-clamp-1">
+        <p className="text-xs text-gray-300 line-clamp-1">
           {song.artist_name}
         </p>
       </div>

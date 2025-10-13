@@ -33,7 +33,7 @@ export default function RankingCard({ ranking, rank }: RankingCardProps) {
   };
 
   return (
-    <div className="bg-gray-900 rounded-xl shadow-md hover:shadow-xl transition-all duration-200 overflow-hidden border border-gray-800">
+    <div className="rounded-xl shadow-md hover:shadow-xl transition-all duration-200 overflow-hidden border font-sans" style={{ backgroundColor: '#242424', borderColor: '#3A3A3C' }}>
       {/* ランク表示エリア */}
       <div className={`bg-gradient-to-r ${getRankColor(rank)} px-4 py-3`}>
         <div className="flex items-center justify-between">
