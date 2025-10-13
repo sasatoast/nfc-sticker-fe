@@ -68,9 +68,9 @@ export default function ArtistPage({ params }: ArtistPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-black flex flex-col">
+    <div className="min-h-screen flex flex-col font-sans" style={{ backgroundColor: '#1C1C1E' }}>
       {/* ヘッダー */}
-      <header className="bg-black border-b border-gray-800">
+      <header style={{ backgroundColor: '#1C1C1E', borderBottomColor: '#3A3A3C' }} className="border-b">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <button
@@ -92,7 +92,7 @@ export default function ArtistPage({ params }: ArtistPageProps) {
       <main className="flex-1 overflow-y-auto pb-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* アーティスト情報セクション */}
-          <div className="bg-gray-900 rounded-xl shadow-md p-6 mb-8 border border-gray-800">
+          <div className="rounded-xl shadow-md p-6 mb-8 border" style={{ backgroundColor: '#242424', borderColor: '#3A3A3C' }}>
             <div className="text-center">
               {/* アーティスト画像 */}
               <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden shadow-lg border-2 border-red-500">
