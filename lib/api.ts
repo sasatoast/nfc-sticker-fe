@@ -300,6 +300,12 @@ export interface Song {
 
 export interface PlayerSongResponse extends Song {}
 
+export interface SongForShareResponse extends Song {}
+
+export interface ShareUrlResponse {
+  url: string;
+}
+
 export interface ReceivedSongItem {
   song_id: number;
   song_name: string;
@@ -366,6 +372,34 @@ export interface UnlockSongErrorResponse {
 export async function getPlayerSong(id: string, shareId?: string | null): Promise<PlayerSongResponse> {
   const queryParams = shareId ? `?share_id=${encodeURIComponent(shareId)}` : '';
   return apiGet<PlayerSongResponse>(`/player/songs/${id}${queryParams}`);
+}
+
+/**
+ * URL発行用の楽曲取得（認証必要）
+ * songs#showエンドポイントを使用してsong_idのみで楽曲情報を取得
+ */
+export async function getSongForShare(songId: string): Promise<SongForShareResponse> {
+  // 認証トークンを明示的に確認
+  const token = getAuthToken();
+  if (!token) {
+    throw new Error('認証が必要です。ログインしてください。');
+  }
+  
+  return apiGet<SongForShareResponse>(`/player/songs/${songId}`, true);
+}
+
+/**
+ * 共有URL生成（認証必要）
+ * current_userのshare_idを使用してバックエンドでURLを生成
+ */
+export async function generateShareUrl(songId: string): Promise<ShareUrlResponse> {
+  // 認証トークンを明示的に確認
+  const token = getAuthToken();
+  if (!token) {
+    throw new Error('認証が必要です。ログインしてください。');
+  }
+  
+  return apiGet<ShareUrlResponse>(`/songs/${songId}/share_url`, true);
 }
 
 /**
