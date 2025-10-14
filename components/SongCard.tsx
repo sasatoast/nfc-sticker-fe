@@ -42,20 +42,6 @@ function SongCardContent({ song }: { song: ReceivedSongItem | UserSongItem }) {
           alt={song.song_name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
         />
-        
-        {/* オーバーレイ（ホバー時） */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-end p-4">
-          <div className="flex items-center gap-2 text-white">
-            <svg
-              className="w-8 h-8"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M8 5v14l11-7z" />
-            </svg>
-            <span className="text-sm font-medium">再生する</span>
-          </div>
-        </div>
       </div>
 
       {/* 楽曲情報エリア */}
