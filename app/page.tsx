@@ -99,7 +99,7 @@ export default function Home() {
           ) : (
             <div className="space-y-4">
               <p className="text-gray-400 mb-6">
-                まずはログインして、音楽の世界を楽しみましょう
+                ログインすると共有された楽曲が保存できたり、ステッカーを持ってたら誰かに共有もできます
               </p>
               <div className="flex gap-4 justify-center">
                 <Link
