@@ -211,30 +211,4 @@ npm install
 npm run dev
 ```
 
-## 参考資料
 
-- [Next.js ドキュメント](https://nextjs.org/docs) - Next.jsの機能とAPI
-- [Next.js チュートリアル](https://nextjs.org/learn) - インタラクティブなNext.jsチュートリアル
-- [Tailwind CSS](https://tailwindcss.com/docs) - Tailwind CSSドキュメント
-- [React ドキュメント](https://ja.react.dev) - Reactの公式ドキュメント
-
-## デプロイ
-
-### Vercel（推奨）
-
-Next.jsの開発元であるVercelへのデプロイが最も簡単です。
-
-1. [Vercel Platform](https://vercel.com/new) にアクセス
-2. GitHubリポジトリを接続
-3. 環境変数を設定
-4. デプロイ
-
-詳細は [Next.js デプロイメントドキュメント](https://nextjs.org/docs/app/building-your-application/deploying) を参照してください。
-
-## ライセンス
-
-Private
-
-## 作成者
-
-NFC Sticker Team
