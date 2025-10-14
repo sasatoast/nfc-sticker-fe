@@ -67,22 +67,22 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4 font-sans" style={{ backgroundColor: '#1C1C1E' }}>
       <div className="w-full max-w-md">
         {/* ロゴ・タイトル */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-blue-900 mb-2">NFC Sticker</h1>
-          <p className="text-blue-600">音楽を共有しよう</p>
+          <h1 className="text-3xl font-bold text-white mb-2">NFC Sticker</h1>
+          <p className="text-gray-300">音楽を共有しよう</p>
         </div>
 
         {/* サインアップフォーム */}
-        <div className="bg-white rounded-2xl p-8 shadow-xl border border-blue-100">
-          <h2 className="text-2xl font-semibold text-blue-900 mb-6 text-center">
+        <div className="rounded-2xl p-8 border" style={{ backgroundColor: '#242424', borderColor: '#3A3A3C' }}>
+          <h2 className="text-2xl font-semibold text-white mb-6 text-center">
             新規登録
           </h2>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
+            <div className="border px-4 py-3 rounded-lg mb-4" style={{ backgroundColor: '#2C2C2E', borderColor: '#FF3B30', color: '#FF453A' }}>
               {error}
             </div>
           )}
@@ -90,7 +90,7 @@ export default function SignupPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* メールアドレス */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-blue-900 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
                 メールアドレス
               </label>
               <input
@@ -100,7 +100,8 @@ export default function SignupPage() {
                 value={formData.email}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 bg-white border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-3 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 border transition-all"
+                style={{ backgroundColor: '#2C2C2E', borderColor: '#3A3A3C' }}
                 placeholder="メールアドレスを入力"
                 disabled={isLoading}
               />
@@ -108,7 +109,7 @@ export default function SignupPage() {
 
             {/* ユーザー名 */}
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-blue-900 mb-2">
+              <label htmlFor="name" className="block text-sm font-medium text-white mb-2">
                 ユーザー名
               </label>
               <input
@@ -118,7 +119,8 @@ export default function SignupPage() {
                 value={formData.name}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 bg-white border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-3 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 border transition-all"
+                style={{ backgroundColor: '#2C2C2E', borderColor: '#3A3A3C' }}
                 placeholder="ユーザー名を入力"
                 disabled={isLoading}
               />
@@ -126,7 +128,7 @@ export default function SignupPage() {
 
             {/* パスワード */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-blue-900 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-white mb-2">
                 パスワード
               </label>
               <input
@@ -136,7 +138,8 @@ export default function SignupPage() {
                 value={formData.password}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 bg-white border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-3 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 border transition-all"
+                style={{ backgroundColor: '#2C2C2E', borderColor: '#3A3A3C' }}
                 placeholder="パスワードを入力（6文字以上）"
                 disabled={isLoading}
               />
@@ -144,7 +147,7 @@ export default function SignupPage() {
 
             {/* パスワード確認 */}
             <div>
-              <label htmlFor="passwordConfirmation" className="block text-sm font-medium text-blue-900 mb-2">
+              <label htmlFor="passwordConfirmation" className="block text-sm font-medium text-white mb-2">
                 パスワード確認
               </label>
               <input
@@ -154,7 +157,8 @@ export default function SignupPage() {
                 value={formData.passwordConfirmation}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 bg-white border border-blue-200 rounded-lg text-blue-900 placeholder-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-3 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 border transition-all"
+                style={{ backgroundColor: '#2C2C2E', borderColor: '#3A3A3C' }}
                 placeholder="パスワードを再入力"
                 disabled={isLoading}
               />
@@ -164,7 +168,8 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+              className="w-full text-white py-3 px-4 rounded-lg font-semibold hover:opacity-90 focus:outline-none focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 border"
+              style={{ backgroundColor: '#242424', borderColor: '#3A3A3C' }}
             >
               {isLoading ? '登録中...' : '新規登録'}
             </button>
@@ -172,11 +177,11 @@ export default function SignupPage() {
 
           {/* ログインリンク */}
           <div className="mt-6 text-center">
-            <p className="text-blue-600">
+            <p className="text-gray-300">
               既にアカウントをお持ちの方は{' '}
               <Link
                 href="/auth/login"
-                className="text-blue-700 hover:text-blue-800 font-semibold transition-colors"
+                className="text-white hover:opacity-70 font-semibold transition-opacity"
               >
                 ログイン
               </Link>
@@ -188,7 +193,7 @@ export default function SignupPage() {
         <div className="mt-6 text-center">
           <Link
             href="/"
-            className="text-blue-500 hover:text-blue-600 transition-colors flex items-center justify-center gap-2"
+            className="text-gray-300 hover:text-white transition-colors flex items-center justify-center gap-2"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
