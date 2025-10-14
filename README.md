@@ -67,7 +67,7 @@ npm install
 プロジェクトルートに `.env.local` ファイルを作成し、以下の環境変数を設定してください：
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:3000/api/v1
+NEXT_PUBLIC_API_URL=http://localhost:3000
 ```
 
 ### 開発サーバーの起動
