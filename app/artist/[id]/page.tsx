@@ -53,7 +53,7 @@ export default function ArtistPage({ params }: ArtistPageProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#1C1C1E' }}>
         <div className="text-white text-xl">読み込み中...</div>
       </div>
     );
@@ -61,7 +61,7 @@ export default function ArtistPage({ params }: ArtistPageProps) {
 
   if (error || !artist) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#1C1C1E' }}>
         <div className="text-white text-xl">{error || 'アーティストが見つかりませんでした'}</div>
       </div>
     );

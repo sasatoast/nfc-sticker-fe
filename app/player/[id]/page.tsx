@@ -56,7 +56,7 @@ export default function PlayerPage({ params }: PlayerPageProps) {
 
   if (isLoading || authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#1C1C1E' }}>
         <div className="text-white text-xl">読み込み中...</div>
       </div>
     );
@@ -64,7 +64,7 @@ export default function PlayerPage({ params }: PlayerPageProps) {
 
   if (error || !song) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#1C1C1E' }}>
         <div className="text-white text-xl">{error || '楽曲が見つかりませんでした'}</div>
       </div>
     );
