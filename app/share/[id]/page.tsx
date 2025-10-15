@@ -100,8 +100,6 @@ export default function ShareSongPage() {
         if (navigator.share) {
           try {
             await navigator.share({
-              title: `${song.name} - ${song.artist_name}`,
-              text: `${song.name} by ${song.artist_name}`,
               url: shareUrl,
             });
           } catch (shareErr) {
