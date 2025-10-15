@@ -3,7 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { getSongForShare, generateShareUrl, SongForShareResponse } from '@/lib/api';
+import {
+  getSongForShare,
+  generateShareUrl,
+  SongForShareResponse,
+} from '@/lib/api';
 
 export default function ShareSongPage() {
   const router = useRouter();
@@ -50,17 +54,69 @@ export default function ShareSongPage() {
       const response = await generateShareUrl(songId);
       const shareUrl = response.url;
 
-      // クリップボードにコピー
-      await navigator.clipboard.writeText(shareUrl);
-      setCopied(true);
-      
-      // 2秒後にコピー済み表示をリセット
-      setTimeout(() => {
-        setCopied(false);
-      }, 2000);
+      // クリップボードにコピー（フォールバック処理付き）
+      let copySuccess = false;
+
+      // 最新のClipboard APIを試す（HTTPS環境とモダンブラウザ）
+      if (navigator.clipboard && window.isSecureContext) {
+        try {
+          await navigator.clipboard.writeText(shareUrl);
+          copySuccess = true;
+        } catch (err) {
+          console.warn('Clipboard API failed, trying fallback:', err);
+        }
+      }
+
+      // フォールバック: 古いブラウザやHTTP環境向け
+      if (!copySuccess) {
+        try {
+          // テキストエリアを作成してコピー
+          const textArea = document.createElement('textarea');
+          textArea.value = shareUrl;
+          textArea.style.position = 'fixed';
+          textArea.style.left = '-999999px';
+          textArea.style.top = '-999999px';
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+
+          // execCommandを使用（レガシーだが互換性が高い）
+          copySuccess = document.execCommand('copy');
+          document.body.removeChild(textArea);
+        } catch (err) {
+          console.error('Fallback copy failed:', err);
+        }
+      }
+
+      if (copySuccess) {
+        setCopied(true);
+
+        // 2秒後にコピー済み表示をリセット
+        setTimeout(() => {
+          setCopied(false);
+        }, 2000);
+      } else {
+        // スマートフォンでは共有APIを提案
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: `${song.name} - ${song.artist_name}`,
+              text: `${song.name} by ${song.artist_name}`,
+              url: shareUrl,
+            });
+          } catch (shareErr) {
+            console.error('Share failed:', shareErr);
+            // 共有もキャンセルされた場合は手動コピーを促す
+            alert(`URLを手動でコピーしてください:\n${shareUrl}`);
+          }
+        } else {
+          // Web Share APIも使えない場合
+          alert(`URLを手動でコピーしてください:\n${shareUrl}`);
+        }
+      }
     } catch (error) {
       console.error('Failed to copy URL:', error);
-      alert('URLのコピーに失敗しました');
+      alert('URLの生成に失敗しました');
     }
   };
 
@@ -70,7 +126,10 @@ export default function ShareSongPage() {
 
   if (authLoading || isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#1C1C1E' }}>
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: '#1C1C1E' }}
+      >
         <div className="text-white text-xl">読み込み中...</div>
       </div>
     );
@@ -78,20 +137,39 @@ export default function ShareSongPage() {
 
   if (error || !song) {
     return (
-      <div className="relative min-h-screen overflow-hidden" style={{ backgroundColor: '#1C1C1E' }}>
+      <div
+        className="relative min-h-screen overflow-hidden"
+        style={{ backgroundColor: '#1C1C1E' }}
+      >
         <button
           onClick={handleBack}
           className="absolute top-4 left-4 z-30 w-11 h-11 rounded-full backdrop-blur-sm flex items-center justify-center text-white hover:opacity-70 active:scale-95 transition-all duration-200"
-          style={{ backgroundColor: '#242424', borderColor: '#3A3A3C', border: '1px solid' }}
+          style={{
+            backgroundColor: '#242424',
+            borderColor: '#3A3A3C',
+            border: '1px solid',
+          }}
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
           </svg>
         </button>
 
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
-            <p className="text-white text-xl">{error || '楽曲が見つかりません'}</p>
+            <p className="text-white text-xl">
+              {error || '楽曲が見つかりません'}
+            </p>
           </div>
         </div>
       </div>
@@ -99,7 +177,10 @@ export default function ShareSongPage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden" style={{ backgroundColor: '#1C1C1E' }}>
+    <div
+      className="relative min-h-screen overflow-hidden"
+      style={{ backgroundColor: '#1C1C1E' }}
+    >
       {/* 背景のぼかし効果（楽曲画像） */}
       <div
         className="absolute inset-0 opacity-20 blur-3xl"
@@ -114,10 +195,24 @@ export default function ShareSongPage() {
       <button
         onClick={handleBack}
         className="absolute top-4 left-4 z-30 w-11 h-11 rounded-full backdrop-blur-sm flex items-center justify-center text-white hover:opacity-70 active:scale-95 transition-all duration-200"
-        style={{ backgroundColor: '#242424', borderColor: '#3A3A3C', border: '1px solid' }}
+        style={{
+          backgroundColor: '#242424',
+          borderColor: '#3A3A3C',
+          border: '1px solid',
+        }}
       >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        <svg
+          className="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
         </svg>
       </button>
 
@@ -126,7 +221,10 @@ export default function ShareSongPage() {
         <div className="w-full max-w-md">
           {/* アルバムアート */}
           <div className="mb-8 relative">
-            <div className="aspect-square rounded-2xl overflow-hidden shadow-2xl border" style={{ borderColor: '#3A3A3C' }}>
+            <div
+              className="aspect-square rounded-2xl overflow-hidden shadow-2xl border"
+              style={{ borderColor: '#3A3A3C' }}
+            >
               <img
                 src={song.picture_url}
                 alt={song.name}
@@ -140,32 +238,50 @@ export default function ShareSongPage() {
             <h1 className="text-3xl font-bold text-white mb-3 leading-tight">
               {song.name}
             </h1>
-            <p className="text-xl text-gray-300">
-              {song.artist_name}
-            </p>
+            <p className="text-xl text-gray-300">{song.artist_name}</p>
           </div>
 
           {/* URL発行ボタン */}
           <button
             onClick={handleCopyUrl}
             className="w-full py-4 rounded-xl font-semibold text-white transition-all duration-200 hover:opacity-90 active:scale-95 border"
-            style={{ 
+            style={{
               backgroundColor: copied ? '#34C759' : '#242424',
-              borderColor: '#3A3A3C'
+              borderColor: '#3A3A3C',
             }}
           >
             <div className="flex items-center justify-center gap-2">
               {copied ? (
                 <>
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
                   </svg>
                   <span>コピーしました！</span>
                 </>
               ) : (
                 <>
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"
+                    />
                   </svg>
                   <span>URLをコピーする</span>
                 </>
@@ -174,7 +290,10 @@ export default function ShareSongPage() {
           </button>
 
           {/* 説明テキスト */}
-          <div className="mt-6 p-4 rounded-xl border" style={{ backgroundColor: '#242424', borderColor: '#3A3A3C' }}>
+          <div
+            className="mt-6 p-4 rounded-xl border"
+            style={{ backgroundColor: '#242424', borderColor: '#3A3A3C' }}
+          >
             <p className="text-gray-300 text-sm leading-relaxed text-center">
               ステッカーに書き込んでも、SNSで送ってもどちらでも共有できます！
             </p>
@@ -184,4 +303,3 @@ export default function ShareSongPage() {
     </div>
   );
 }
-
