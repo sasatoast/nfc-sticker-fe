@@ -124,7 +124,7 @@ export default function Home() {
           <div className="mt-12 pt-8 border-t" style={{ borderColor: '#3A3A3C' }}>
             <p className="text-gray-400 mb-4">デモ用プレイヤー</p>
             <Link
-              href="/player/16"
+              href="/player/19"
               className="inline-flex items-center gap-2 text-white px-6 py-3 rounded-lg transition-opacity hover:opacity-70 border"
               style={{ backgroundColor: '#2C2C2E', borderColor: '#3A3A3C' }}
             >
