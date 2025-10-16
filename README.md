@@ -64,7 +64,7 @@ npm install
 
 ### 環境変数
 
-プロジェクトルートに `.env.local` ファイルを作成し、以下の環境変数を設定してください：
+プロジェクトルートに `.env.local` ファイルを作成し、バックエンドのURLを設定してください：
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:3000
