@@ -104,13 +104,7 @@ nfc-sticker-fe/
 │   ├── artist/[id]/        # アーティスト詳細ページ
 │   ├── layout.tsx          # ルートレイアウト
 │   └── page.tsx            # ランディングページ
-├── components/              # 再利用可能なコンポーネント
-│   ├── AppleMusicButton.tsx
-│   ├── AudioPlayer.tsx
-│   ├── FooterNavigation.tsx
-│   ├── RankingCard.tsx
-│   ├── SongCard.tsx
-│   └── SpotifyButton.tsx
+├── components/              # コンポーネント
 ├── contexts/                # React Context
 │   └── AuthContext.tsx     # 認証コンテキスト
 ├── lib/                     # ユーティリティ関数
