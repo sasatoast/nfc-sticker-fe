@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { getUserSongs, UserSongItem } from '@/lib/api';
 import FooterNavigation from '@/components/FooterNavigation';
 import SongCard from '@/components/SongCard';
+import TipsModal from '@/components/TipsModal';
 
 export default function SharePage() {
   const router = useRouter();
@@ -13,6 +14,7 @@ export default function SharePage() {
   const [songs, setSongs] = useState<UserSongItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showTips, setShowTips] = useState(false);
 
   useEffect(() => {
     if (authLoading) {
@@ -25,6 +27,12 @@ export default function SharePage() {
     }
 
     fetchUserSongs();
+
+    // 初回訪問時にTipsを表示
+    const hasSeenTips = localStorage.getItem('hideTipsModal');
+    if (!hasSeenTips) {
+      setShowTips(true);
+    }
   }, [isAuthenticated, authLoading, router]);
 
   const fetchUserSongs = async () => {
@@ -59,6 +67,9 @@ export default function SharePage() {
 
   return (
     <div className="min-h-screen flex flex-col font-sans" style={{ backgroundColor: '#1C1C1E' }}>
+      {/* Tipsモーダル */}
+      {showTips && <TipsModal onClose={() => setShowTips(false)} />}
+      
       {/* ヘッダー */}
       <header style={{ backgroundColor: '#1C1C1E', borderBottomColor: '#3A3A3C' }} className="border-b">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
