@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { getUserSongs, UserSongItem } from '@/lib/api';
 import FooterNavigation from '@/components/FooterNavigation';
-import SongCard from '@/components/SongCard';
+import ShareSongItem from '@/components/ShareSongItem';
 import TipsModal from '@/components/TipsModal';
 
 export default function SharePage() {
@@ -59,19 +59,28 @@ export default function SharePage() {
 
   if (authLoading || isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#1C1C1E' }}>
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: '#1C1C1E' }}
+      >
         <div className="text-white text-xl">読み込み中...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col font-sans" style={{ backgroundColor: '#1C1C1E' }}>
+    <div
+      className="min-h-screen flex flex-col font-sans"
+      style={{ backgroundColor: '#1C1C1E' }}
+    >
       {/* Tipsモーダル */}
       {showTips && <TipsModal onClose={() => setShowTips(false)} />}
-      
+
       {/* ヘッダー */}
-      <header style={{ backgroundColor: '#1C1C1E', borderBottomColor: '#3A3A3C' }} className="border-b">
+      <header
+        style={{ backgroundColor: '#1C1C1E', borderBottomColor: '#3A3A3C' }}
+        className="border-b"
+      >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-white">共有楽曲</h1>
@@ -89,15 +98,28 @@ export default function SharePage() {
             style={{ backgroundColor: '#242424', borderColor: '#3A3A3C' }}
           >
             <div className="flex items-center justify-center gap-2">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
               </svg>
               <span>新しい楽曲を追加する</span>
             </div>
           </button>
 
           {error && (
-            <div className="border text-white px-4 py-3 rounded-lg mb-4" style={{ backgroundColor: '#242424', borderColor: '#3A3A3C' }}>
+            <div
+              className="border text-white px-4 py-3 rounded-lg mb-4"
+              style={{ backgroundColor: '#242424', borderColor: '#3A3A3C' }}
+            >
               {error}
             </div>
           )}
@@ -117,20 +139,23 @@ export default function SharePage() {
                   d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
                 />
               </svg>
-              <p className="text-white text-lg">まだ共有可能な楽曲がありません</p>
+              <p className="text-white text-lg">
+                まだ共有可能な楽曲がありません
+              </p>
               <p className="text-gray-400 text-sm mt-2">
                 「新しい楽曲を追加する」ボタンから楽曲を開放しましょう！
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-3">
-              {songs && songs.map((song) => (
-                <SongCard 
-                  key={song.song_id} 
-                  song={song} 
-                  onClick={() => handleSongClick(song.song_id)}
-                />
-              ))}
+            <div className="flex flex-col gap-3">
+              {songs &&
+                songs.map((song) => (
+                  <ShareSongItem
+                    key={song.song_id}
+                    song={song}
+                    onClick={() => handleSongClick(song.song_id)}
+                  />
+                ))}
             </div>
           )}
         </div>
@@ -141,4 +166,3 @@ export default function SharePage() {
     </div>
   );
 }
-
