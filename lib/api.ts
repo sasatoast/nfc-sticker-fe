@@ -60,7 +60,7 @@ async function apiRequest<T>(
 
   try {
     console.log('Making API request to:', url, 'with headers:', requestHeaders);
-    
+
     const response = await fetch(url, {
       ...fetchOptions,
       headers: requestHeaders,
@@ -89,9 +89,9 @@ async function apiRequest<T>(
       if (response.status === 422) {
         const errorData = await response.json().catch(() => ({
           message: 'バリデーションエラーが発生しました',
-          errors: []
+          errors: [],
         }));
-        
+
         // エラーメッセージを日本語に変換
         const errorMessages = errorData.errors || [];
         const japaneseMessages = errorMessages.map((msg: string) => {
@@ -112,9 +112,9 @@ async function apiRequest<T>(
           }
           return msg; // その他のエラーはそのまま表示
         });
-        
-        const errorMessage = Array.isArray(japaneseMessages) 
-          ? japaneseMessages.join('、') 
+
+        const errorMessage = Array.isArray(japaneseMessages)
+          ? japaneseMessages.join('、')
           : japaneseMessages;
         const error = new Error(errorMessage);
         (error as any).status = 422;
@@ -125,7 +125,7 @@ async function apiRequest<T>(
       const error = await response.json().catch(() => ({
         message: 'エラーが発生しました',
       }));
-      
+
       // error_code が含まれる場合の処理
       if (error.error_code) {
         let errorMessage = 'エラーが発生しました';
@@ -147,7 +147,7 @@ async function apiRequest<T>(
         (customError as any).error_code = error.error_code;
         throw customError;
       }
-      
+
       throw new Error(error.message || `HTTP Error: ${response.status}`);
     }
 
@@ -159,14 +159,16 @@ async function apiRequest<T>(
     return await response.json();
   } catch (error) {
     console.error('API Request Error for URL:', url, error);
-    
+
     // ネットワークエラーの場合の詳細な情報を提供
     if (error instanceof TypeError && error.message === 'Failed to fetch') {
-      const networkError = new Error(`ネットワークエラー: ${url} に接続できません。バックエンドサーバーが起動しているか確認してください。`);
+      const networkError = new Error(
+        `ネットワークエラー: ${url} に接続できません。バックエンドサーバーが起動しているか確認してください。`
+      );
       (networkError as any).originalError = error;
       throw networkError;
     }
-    
+
     throw error;
   }
 }
@@ -323,6 +325,14 @@ export interface Artist {
   homepage_url: string;
 }
 
+export interface SharedArtist {
+  artist_id: number;
+  artist_name: string;
+  artist_picture_url: string;
+}
+
+export interface SharedArtistsResponse extends Array<SharedArtist> {}
+
 export interface RankingItem {
   user_name: string;
   song_name: string;
@@ -369,7 +379,10 @@ export interface UnlockSongErrorResponse {
 /**
  * プレイヤー用の楽曲取得（認証不要）
  */
-export async function getPlayerSong(id: string, shareId?: string | null): Promise<PlayerSongResponse> {
+export async function getPlayerSong(
+  id: string,
+  shareId?: string | null
+): Promise<PlayerSongResponse> {
   const queryParams = shareId ? `?share_id=${encodeURIComponent(shareId)}` : '';
   return apiGet<PlayerSongResponse>(`/player/songs/${id}${queryParams}`);
 }
@@ -378,13 +391,15 @@ export async function getPlayerSong(id: string, shareId?: string | null): Promis
  * URL発行用の楽曲取得（認証必要）
  * songs#showエンドポイントを使用してsong_idのみで楽曲情報を取得
  */
-export async function getSongForShare(songId: string): Promise<SongForShareResponse> {
+export async function getSongForShare(
+  songId: string
+): Promise<SongForShareResponse> {
   // 認証トークンを明示的に確認
   const token = getAuthToken();
   if (!token) {
     throw new Error('認証が必要です。ログインしてください。');
   }
-  
+
   return apiGet<SongForShareResponse>(`/player/songs/${songId}`, true);
 }
 
@@ -392,21 +407,28 @@ export async function getSongForShare(songId: string): Promise<SongForShareRespo
  * 共有URL生成（認証必要）
  * current_userのshare_idを使用してバックエンドでURLを生成
  */
-export async function generateShareUrl(songId: string): Promise<ShareUrlResponse> {
+export async function generateShareUrl(
+  songId: string
+): Promise<ShareUrlResponse> {
   // 認証トークンを明示的に確認
   const token = getAuthToken();
   if (!token) {
     throw new Error('認証が必要です。ログインしてください。');
   }
-  
+
   return apiGet<ShareUrlResponse>(`/songs/${songId}/share_url`, true);
 }
 
 /**
  * 共有された楽曲一覧取得（認証必要）
  */
-export async function getReceivedSongs(): Promise<ReceivedSongItem[] | ReceivedSongsApiResponse> {
-  return apiGet<ReceivedSongItem[] | ReceivedSongsApiResponse>('/users/received/songs', true);
+export async function getReceivedSongs(): Promise<
+  ReceivedSongItem[] | ReceivedSongsApiResponse
+> {
+  return apiGet<ReceivedSongItem[] | ReceivedSongsApiResponse>(
+    '/users/received/songs',
+    true
+  );
 }
 
 /**
@@ -417,9 +439,29 @@ export async function getArtist(artistId: string): Promise<Artist> {
 }
 
 /**
+ * 共有されたアーティスト一覧取得（認証必要）
+ */
+export async function getSharedArtists(): Promise<SharedArtist[]> {
+  const response = await apiGet<SharedArtist[] | { error: string }>(
+    '/artists/shared',
+    true
+  );
+
+  // レスポンスが配列の場合はそのまま返す
+  if (Array.isArray(response)) {
+    return response;
+  }
+
+  // エラーレスポンスの場合は空配列を返す
+  return [];
+}
+
+/**
  * アーティストランキング取得
  */
-export async function getArtistRanking(artistId: string): Promise<ArtistRankingResponse> {
+export async function getArtistRanking(
+  artistId: string
+): Promise<ArtistRankingResponse> {
   return apiGet<ArtistRankingResponse>(`/ranking/${artistId}`);
 }
 
@@ -427,18 +469,21 @@ export async function getArtistRanking(artistId: string): Promise<ArtistRankingR
  * ユーザーの共有可能楽曲一覧取得（認証必要）
  */
 export async function getUserSongs(): Promise<UserSongItem[]> {
-  const response = await apiGet<UserSongItem[] | { message: string }>('/users/songs', true);
-  
+  const response = await apiGet<UserSongItem[] | { message: string }>(
+    '/users/songs',
+    true
+  );
+
   // レスポンスが配列の場合はそのまま返す
   if (Array.isArray(response)) {
     return response;
   }
-  
+
   // メッセージが含まれる場合は空配列を返す（楽曲がない場合）
   if (response && 'message' in response) {
     return [];
   }
-  
+
   // その他の場合は空配列を返す
   return [];
 }
@@ -446,7 +491,10 @@ export async function getUserSongs(): Promise<UserSongItem[]> {
 /**
  * 楽曲のアンロック（認証必要）
  */
-export async function unlockSong(songId: string, password: string): Promise<UnlockSongResponse> {
+export async function unlockSong(
+  songId: string,
+  password: string
+): Promise<UnlockSongResponse> {
   return apiPost<UnlockSongResponse>(
     `/users/songs/${songId}/unlock`,
     { password },
@@ -460,4 +508,3 @@ export async function unlockSong(songId: string, password: string): Promise<Unlo
 export function isLoggedIn(): boolean {
   return !!getAuthToken();
 }
-
