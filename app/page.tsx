@@ -21,18 +21,27 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center font-sans" style={{ backgroundColor: '#1C1C1E' }}>
+      <div
+        className="min-h-screen flex items-center justify-center font-sans"
+        style={{ backgroundColor: '#1C1C1E' }}
+      >
         <div className="text-white text-xl">読み込み中...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col font-sans" style={{ backgroundColor: '#1C1C1E' }}>
+    <div
+      className="min-h-screen flex flex-col font-sans"
+      style={{ backgroundColor: '#1C1C1E' }}
+    >
       {/* ヘッダー */}
-      <header className="flex items-center justify-between p-6 border-b" style={{ borderColor: '#3A3A3C' }}>
+      <header
+        className="flex items-center justify-between p-6 border-b"
+        style={{ borderColor: '#3A3A3C' }}
+      >
         <h1 className="text-2xl font-bold text-white">NFC Sticker</h1>
-        
+
         {isAuthenticated ? (
           <div className="flex items-center gap-4">
             <span className="text-gray-300">こんにちは、{user?.name}さん</span>
@@ -68,16 +77,16 @@ export default function Home() {
       <main className="flex-1 flex items-center justify-center p-6">
         <div className="text-center max-w-2xl">
           <h2 className="text-4xl font-bold text-white mb-6">
-            マジでいいバンドを俺らが広めよう
+            まだ見つかっていない"良い"バンドを広めよう
           </h2>
           <p className="text-xl text-gray-300 mb-8">
-            ステッカーですぐに友達に聞かせることができる！
+            ステッカーですぐに友達に聞かせることができます
           </p>
 
           {isAuthenticated ? (
             <div className="space-y-4">
               <p className="text-gray-400 mb-6">
-                共有された楽曲を確認したり、新しい楽曲を共有したりできる！
+                共有された楽曲を確認したり、楽曲の共有回数をカウントできます
               </p>
               <div className="flex gap-4 justify-center">
                 <Link
@@ -121,7 +130,10 @@ export default function Home() {
           )}
 
           {/* デモ用のプレイヤーリンク */}
-          <div className="mt-12 pt-8 border-t" style={{ borderColor: '#3A3A3C' }}>
+          <div
+            className="mt-12 pt-8 border-t"
+            style={{ borderColor: '#3A3A3C' }}
+          >
             <p className="text-gray-400 mb-4">デモ用プレイヤー</p>
             <Link
               href="/player/19"
